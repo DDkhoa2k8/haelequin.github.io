@@ -27,7 +27,9 @@ async function initCanvas() {
     const context = canvas.getContext('webgpu');
 
     const format = navigator.gpu.getPreferredCanvasFormat();
-    context.configure({ device, format, alphaMode:"premultiplied" });
+    context.configure({ device, format, 
+        alphaMode:"premultiplied", 
+    });
 
     const module = device.createShaderModule({
         label: 'our hardcoded red triangle shaders',
@@ -46,9 +48,38 @@ async function initCanvas() {
         ],
     }; 
 
+    //-----------Time uniform-------------------//
+    let time = 0;
+
+    const timeBuf = device.createBuffer({
+        size: 4 * 1,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            {
+                binding: 0,
+                visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+                buffer: { type: 'uniform' },
+            },
+        ], 
+    });
+
+    const pipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [bindGroupLayout],
+    });  
+
+    const bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 0, resource: { buffer: timeBuf }},
+        ]
+    });
+
     const pipeline = device.createRenderPipeline({
         label: 'our hardcoded red triangle pipeline',
-        layout: 'auto',
+        layout: pipelineLayout, 
         vertex: {
             module,
         },
@@ -59,6 +90,10 @@ async function initCanvas() {
     });
 
     function render() {
+        device.queue.writeBuffer(timeBuf, 0, new Float32Array([time]));    
+
+        time += 0.02;
+
         renderPassDescriptor.colorAttachments[0].view =
         context.getCurrentTexture().createView();
 
@@ -68,6 +103,7 @@ async function initCanvas() {
         // make a render pass encoder to encode render specific commands
         const pass = encoder.beginRenderPass(renderPassDescriptor);
         pass.setPipeline(pipeline);
+        pass.setBindGroup(0, bindGroup);
         pass.draw(6);
         pass.end();
     

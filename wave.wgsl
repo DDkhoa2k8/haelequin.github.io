@@ -3,9 +3,13 @@ struct VertexOutput {
     @location(0) colorPos: vec2f, 
 };
 
-fn reMap(agl, ) -> f32 {
-
+fn reMap(agl: f32, pos: vec2f) -> f32 {
+    return pos.x * cos(agl) + pos.y * sin(agl);
 }
+
+const PI: f32 = 3.141592653589793;
+
+@group(0) @binding(0) var<uniform> time: f32;
 
 @vertex
 fn vs(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
@@ -41,5 +45,11 @@ fn vs(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
 fn fs(input: VertexOutput) -> @location(0) vec4f {
     let color = vec3f(0.0, 135.0, 255.0) / 255.0;
 
-    return vec4f(color * ((cos(input.colorPos.x * 10) + 1) / 4 + 0.5), 1);
+    let h = (cos(reMap(0.5235987755982988, input.colorPos) * 7 + 
+            sin(reMap(0.5235987755982988 + PI / 2, input.colorPos) * 5) + time
+        ) + 1) / 4 + 0.2;
+
+    return vec4f(
+        color * h, 1
+    );
 }
