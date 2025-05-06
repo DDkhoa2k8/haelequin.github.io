@@ -1,13 +1,74 @@
 html, body {
-    height: 100%;
     margin: 0%;
+    width: 100%;
 }
 
-html {
+body {
+    background-color: rgb(47, 47, 47);
+}
+
+* {
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+#mainL {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1 !important;
+}
+
+#home-header {
+    font-size: 50px;
+    padding-left: 100px;
+    padding-top: 50px;
+    height: fit-content;
+    width: 100%;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+#home-header span {
     overflow: hidden;
+    position: relative;
+    display: inline-block;
+}
+
+.move {
+    opacity: 0;
+    position: absolute;
+    top: 70px;
+}
+
+#mainCon {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 20%;
+    padding-right: 20%;
+    box-sizing: border-box;
+    font-size: 30px;
+    z-index: 1 !important;
+}
+
+@keyframes showUp {
+    0% {
+        top: 70px;
+        opacity: 0;
+    }
+    100% {
+        top: 0px;
+        opacity: 1;
+    }
 }
 
 #cv {
     height: 100%;
     width: 100%;
+    position: absolute;
+    z-index: 0;
 }
