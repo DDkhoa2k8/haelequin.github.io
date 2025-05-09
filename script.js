@@ -145,7 +145,7 @@ async function initCanvas() {
     let aboutTxtEl = document.querySelector('#aboutTxt').getBoundingClientRect();
 
     const aboutTextBoxCount = 10;
-    const aboutStep = aboutTxtEl.width / aboutTextBoxCount;
+    let aboutStep = aboutTxtEl.width / aboutTextBoxCount;
 
     for (let i = 0;i < aboutTextBoxCount;i++) {
         aboutTextBoxTar.push((aboutTxtEl.left + aboutStep * i) * window.devicePixelRatio, canvas.height * 1.5, 100);
@@ -288,6 +288,8 @@ async function initCanvas() {
 
             aboutTextBoxTar = [];
             aboutTextBoxOld = [];
+            aboutTxtEl = document.querySelector('#aboutTxt').getBoundingClientRect();
+            aboutStep = aboutTxtEl.width / aboutTextBoxCount;
 
             for (let i = 0;i < aboutTextBoxCount;i++) {
                 aboutTextBoxTar.push((aboutTxtEl.left + aboutStep * i) * window.devicePixelRatio, canvas.height * 1.5, 120);
@@ -310,7 +312,7 @@ async function initCanvas() {
 
     function render() {
         time = Date.now() - startTime;
-        // console.log(1000 / (time - oldTime));
+        console.log(time);
         oldTime = time;
 
         let arrowPos = aboutRect.top - scroll / window.devicePixelRatio + aboutRect.height / 2;
@@ -438,30 +440,42 @@ function setDelayAni(gap, ani, query) {
 }
 
 function showAbout() {
-    const about = document.getElementById('aboutTxt');
+    const about = document.querySelectorAll('#aboutTxt span span');
 
-    const aboutText = about.innerHTML;
+    document.querySelector('#about h1').classList.add('showAbout');
+    // document.querySelector('#about h1').offsetHeight;
 
-    aboutText.split(' ').forEach((e, i) => {
-        about.innerHTML = about.innerHTML.replace(e, `<span>${e}</span>`);
-    });
+    let layer = 0;
+    let layerIndex = -1;
 
-    about.children.forEach((e, i) => {
+    about.forEach(e => {
+        let rect = e.getBoundingClientRect();
+
+        if (rect.top > layer) {
+            layer = rect.top;
+            layerIndex++;
+        }
+
         e.style.animation = "showUp 1s ease forwards";
-        e.style.animationDelay = i * .1 + "s";
+        e.style.animationDelay = layerIndex * .1 + "s";
+        e.style.animationFillMode = "forwards";
     });
-
-    about.classList.add('showAbout');
-
-    // setTimeout(() => {
-    //     about.classList.remove('showAbout');
-    // }, 1000);
 }
 
 async function main() {
     await initCanvas();
 
     setDelayAni(100, "showUp .5s ease", '#home-header span[class="move"]');
+
+    const about = document.getElementById('aboutTxt');
+
+    const aboutText = about.innerHTML;
+
+    about.innerHTML = "";
+
+    aboutText.split(' ').forEach(e => {
+        about.innerHTML += ` <span><span>${e}</span></span>`;
+    });
 }
 
 main();

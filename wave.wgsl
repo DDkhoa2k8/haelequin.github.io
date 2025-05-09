@@ -72,6 +72,8 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
     //let color = vec4f(input.gradient, 1);
     let color = vec4f(0, 0, 0, 1);
     var sum:f32 = 0;
+    let t = f32(min(time, 1000)) / 1000.0;
+    let ani = 1 - pow(abs(1 - t), 4);
 
     for (var i: u32 = 0;i < globleCirCount;i++) {
         sum += pow(globleCir[3 * i + 2], 2) / (pow(input.pos.x - globleCir[3 * i], 2) + pow(input.pos.y - globleCir[3 * i + 1] - scroll, 2));
@@ -102,12 +104,12 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
     sum = 0;
 
     for (var i: u32 = 0;i < cirCount;i++) {
-        sum += pow(homecir[3 * i + 2], 2) / (pow(input.pos.x - homecir[3 * i] - 100, 2) + pow(input.pos.y - homecir[3 * i + 1] - scroll, 2));
+        sum += pow(homecir[3 * i + 2], 2) / (pow(input.pos.x - homecir[3 * i] - 100 * ani, 2) + pow(input.pos.y - homecir[3 * i + 1] - scroll - 50 * ani, 2));
     }
 
     if (input.pos.y < ratio.y + scroll + 100) {
         for (var i: u32 = 0;i < globleCirCount;i++) {
-            sum += pow(globleCir[3 * i + 2], 2) / (pow(input.pos.x - globleCir[3 * i] - 50, 2) + pow(input.pos.y - globleCir[3 * i + 1] - scroll, 2));
+            sum += pow(globleCir[3 * i + 2], 2) / (pow(input.pos.x - globleCir[3 * i] - 50 * ani, 2) + pow(input.pos.y - globleCir[3 * i + 1] - scroll, 2));
         }
 
         sum += pow(100 / pixR, 2) / pow(input.pos.y - 100 / pixR, 2);
