@@ -143,16 +143,29 @@ async function initCanvas() {
     let aboutTextBox = [];
     let aboutTextBoxOld = [];
     let aboutTxtEl = document.querySelector('#aboutTxt').getBoundingClientRect();
+    let aboutTextBoxSize = 100;
 
-    const aboutTextBoxCount = 10;
-    let aboutStep = aboutTxtEl.width / aboutTextBoxCount;
+    const aboutTextBoxCount = 20;
 
-    for (let i = 0;i < aboutTextBoxCount;i++) {
-        aboutTextBoxTar.push((aboutTxtEl.left + aboutStep * i) * window.devicePixelRatio, canvas.height * 1.5, 100);
-        aboutTextBoxOld.push(canvas.width / 2, canvas.height * 1.5, 0);
+    loop:
+    for (let h = 0;h < Math.floor(aboutTxtEl.height / aboutTextBoxSize) + 1;h++) {
+        for (let w = 0;w < Math.floor(aboutTxtEl.width / aboutTextBoxSize) + 1;w++) {
+            if ((w + 1) * (h + 1) > aboutTextBoxCount) {   
+                //console.log(aboutTextBoxTar.length, Math.floor(aboutTxtEl.height / aboutTextBoxSize) + 1, Math.floor(aboutTxtEl.width / aboutTextBoxSize) + 1);
+                break loop;
+            }
+
+            aboutTextBoxTar.push((aboutTxtEl.left + aboutTextBoxSize * w) * window.devicePixelRatio, (aboutTxtEl.top + aboutTextBoxSize * h) * window.devicePixelRatio, aboutTextBoxSize);
+            aboutTextBoxOld.push(canvas.width / 2, canvas.height * 1.5, 0);
+        }
     }
 
-    let aboutCircle = new Float32Array(aboutTextBoxTar.length);
+    // for (let i = 0;i < aboutTextBoxCount;i++) {
+    //     aboutTextBoxTar.push((aboutTxtEl.left + aboutStep * i) * window.devicePixelRatio, canvas.height * 1.5, aboutTextBoxSize);
+    //     aboutTextBoxOld.push(canvas.width / 2, canvas.height * 1.5, 0);
+    // }
+
+    let aboutCircle = new Float32Array(aboutTextBoxCount * 3);
 
     const aboutCirBuf = device.createBuffer({
         size: aboutCircle.byteLength,
@@ -286,18 +299,27 @@ async function initCanvas() {
             cirArrow.push(canvas.width / 2 + Math.random(), canvas.height * .8 + Math.random(), 100);
             cirArrow.push(canvas.width / 2 + Math.random(), canvas.height * .8 + Math.random(), 100);
 
+
             aboutTextBoxTar = [];
             aboutTextBoxOld = [];
             aboutTxtEl = document.querySelector('#aboutTxt').getBoundingClientRect();
-            aboutStep = aboutTxtEl.width / aboutTextBoxCount;
+  
+            scroll = (home.getBoundingClientRect().top - 50) * window.devicePixelRatio;
 
-            for (let i = 0;i < aboutTextBoxCount;i++) {
-                aboutTextBoxTar.push((aboutTxtEl.left + aboutStep * i) * window.devicePixelRatio, canvas.height * 1.5, 120);
-                aboutTextBoxOld.push(canvas.width / 2, canvas.height * 1.5, 0);
+            loop:
+            for (let h = 0;h < Math.floor(aboutTxtEl.height / aboutTextBoxSize) + 1;h++) {
+                for (let w = 0;w < Math.floor(aboutTxtEl.width / aboutTextBoxSize) + 1;w++) {
+                    if ((w + 1) * (h + 1) > aboutTextBoxCount) {   
+                        break loop;
+                    }
+
+                    aboutTextBoxTar.push((aboutTxtEl.left + aboutTextBoxSize * w) * window.devicePixelRatio, (aboutTxtEl.top + aboutTextBoxSize * h) * window.devicePixelRatio - scroll, aboutTextBoxSize);
+                    aboutTextBoxOld.push(canvas.width / 2, canvas.height * 1.5, 0);
+                }
             }
 
             if (aboutTextBoxAni !== undefined) {
-                aboutTextBoxAni = arrAni(aboutTextBoxOld, aboutTextBoxTar, 1000, startABoutAni, 'ease');
+                aboutTextBoxAni = arrAni([...aboutTextBoxOld], [...aboutTextBoxTar], 1000, startABoutAni, 'ease');
             }
         });
     });
@@ -312,7 +334,6 @@ async function initCanvas() {
 
     function render() {
         time = Date.now() - startTime;
-        console.log(time);
         oldTime = time;
 
         let arrowPos = aboutRect.top - scroll / window.devicePixelRatio + aboutRect.height / 2;
@@ -338,18 +359,22 @@ async function initCanvas() {
         tempCirArrow[1] -= scroll;
         tempCirArrow[4] -= scroll;
 
+        if (scroll < -window.innerHeight * 3.5) {
+            document.querySelector('#skill h1').style.opacity = "1";
+        }
+
         if (arrowPos > window.innerHeight * 1.5) {
             tempCirArrow[1] = window.innerHeight * 1.5 * window.devicePixelRatio;
             tempCirArrow[4] = window.innerHeight * 1.5 * window.devicePixelRatio;
 
-            if (aboutTextBoxAni === undefined) startABoutAni = time, showAbout(), aboutTextBoxAni = arrAni(aboutTextBoxOld, aboutTextBoxTar, 1000, time, 'ease');
-
-            aboutTextBox = aboutTextBoxAni(time);
+            if (aboutTextBoxAni === undefined) startABoutAni = time, showAbout(), aboutTextBoxAni = arrAni([...aboutTextBoxOld], [...aboutTextBoxTar], 1000, time, 'ease');
         } else if (arrowPos > window.innerHeight) {
             about.classList.add('showAbout');
         } else {
             about.classList.remove('showAbout');
         }
+
+        if (aboutTextBoxAni !== undefined) aboutTextBox = aboutTextBoxAni(time);
 
         for (let i = 0;i < cirArrow.length / 3;i++) {
             let dir = (i % 2 == 0 ? 1:-1);
