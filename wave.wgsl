@@ -74,27 +74,31 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
     var sum:f32 = 0;
     let t = f32(min(time, 1000)) / 1000.0;
     let ani = 1 - pow(abs(1 - t), 4);
+    let scrollpxR = scroll * pixR;
+    let pixR2 = pixR / 2;
 
     for (var i: u32 = 0;i < globleCirCount;i++) {
-        sum += pow(globleCir[3 * i + 2], 2) / (pow(input.pos.x - globleCir[3 * i], 2) + pow(input.pos.y - globleCir[3 * i + 1] - scroll, 2));
+        sum += pow(globleCir[3 * i + 2] * pixR2, 2) / (pow(input.pos.x - globleCir[3 * i] * pixR, 2) + pow(input.pos.y - (globleCir[3 * i + 1] + scroll) * pixR, 2));
     }
 
-    if (input.pos.y > ratio.y + scroll + 100) {
-        for (var i: u32 = 0;i < aboutCirCount;i++) {
-            sum += pow(aboutCir[3 * i + 2], 2) / (pow(input.pos.x - aboutCir[3 * i], 2) + pow(input.pos.y - aboutCir[3 * i + 1] - scroll, 2));
-        }
+    sum += pow(.5 * 50 * pixR, 2) / pow(input.pos.y - 25 * pixR, 2);
 
-        sum += pow(100 / pixR, 2) / pow(input.pos.y - 100 / pixR, 2);
+    if (input.pos.y > ratio.y * 3 + scrollpxR) {
+        if (sum >= 1) {
+            return color;
+        }
+    } else if (input.pos.y > ratio.y + scrollpxR) {
+        for (var i: u32 = 0;i < aboutCirCount;i++) {
+            sum += pow(aboutCir[3 * i + 2] * pixR2, 2) / (pow(input.pos.x - aboutCir[3 * i] * pixR, 2) + pow(input.pos.y - (aboutCir[3 * i + 1] + scroll) * pixR, 2));
+        }
 
         if (sum < 1) {
             return color;
         }
     } else {
         for (var i: u32 = 0;i < cirCount;i++) {
-            sum += pow(homecir[3 * i + 2], 2) / (pow(input.pos.x - homecir[3 * i], 2) + pow(input.pos.y - homecir[3 * i + 1] - scroll, 2));
+            sum += pow(homecir[3 * i + 2] * pixR2, 2) / (pow(input.pos.x - homecir[3 * i] * pixR, 2) + pow(input.pos.y - (homecir[3 * i + 1] + scroll) * pixR, 2));
         }
-
-        sum += pow(100 / pixR, 2) / pow(input.pos.y - 100 / pixR, 2);
 
         if (sum >= 1) {
             return color;
@@ -103,16 +107,16 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
 
     sum = 0;
 
-    for (var i: u32 = 0;i < cirCount;i++) {
-        sum += pow(homecir[3 * i + 2], 2) / (pow(input.pos.x - homecir[3 * i] - 100 * ani, 2) + pow(input.pos.y - homecir[3 * i + 1] - scroll - 50 * ani, 2));
-    }
-
-    if (input.pos.y < ratio.y + scroll + 100) {
-        for (var i: u32 = 0;i < globleCirCount;i++) {
-            sum += pow(globleCir[3 * i + 2], 2) / (pow(input.pos.x - globleCir[3 * i] - 50 * ani, 2) + pow(input.pos.y - globleCir[3 * i + 1] - scroll, 2));
+    if (input.pos.y < ratio.y + scrollpxR) {
+        for (var i: u32 = 0;i < cirCount;i++) {
+            sum += pow(homecir[3 * i + 2] * pixR2, 2) / (pow(input.pos.x - homecir[3 * i] * pixR - 100 * ani, 2) + pow(input.pos.y - (homecir[3 * i + 1] + scroll) * pixR - 50 * ani, 2));
         }
 
-        sum += pow(100 / pixR, 2) / pow(input.pos.y - 100 / pixR, 2);
+        for (var i: u32 = 0;i < globleCirCount;i++) {
+            sum += pow(globleCir[3 * i + 2] * pixR2, 2) / (pow(input.pos.x - globleCir[3 * i] * pixR - 50 * ani, 2) + pow(input.pos.y - (globleCir[3 * i + 1] + scroll) * pixR, 2));
+        }
+
+        sum += pow(.5 * 50 * pixR, 2) / pow(input.pos.y - 25 * pixR, 2);//
     }
 
     if (sum >= 1) {
