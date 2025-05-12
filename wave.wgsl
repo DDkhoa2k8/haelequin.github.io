@@ -84,7 +84,7 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
     sum += pow(.5 * 50 * pixR, 2) / pow(input.pos.y - 25 * pixR, 2);
 
     if (input.pos.y > ratio.y * 3 + scrollpxR) {
-        if (sum >= 1) {
+        if (sum <= 1) {
             return color;
         }
     } else if (input.pos.y > ratio.y + scrollpxR) {
@@ -105,9 +105,9 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
         }
     }
 
-    sum = 0;
-
     if (input.pos.y < ratio.y + scrollpxR) {
+        sum = 0;
+        
         for (var i: u32 = 0;i < cirCount;i++) {
             sum += pow(homecir[3 * i + 2] * pixR2, 2) / (pow(input.pos.x - homecir[3 * i] * pixR - 100 * ani, 2) + pow(input.pos.y - (homecir[3 * i + 1] + scroll) * pixR - 50 * ani, 2));
         }
@@ -117,10 +117,10 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
         }
 
         sum += pow(.5 * 50 * pixR, 2) / pow(input.pos.y - 25 * pixR, 2);//
-    }
-
-    if (sum >= 1) {
-        return vec4f(0.7, .7, .7, 1);
+            
+        if (sum >= 1) {
+            return vec4f(0.7, .7, .7, 1);
+        }
     }
 
     return vec4f(1);

@@ -324,6 +324,13 @@ async function initCanvas() {
             e.target.height = e.target.getBoundingClientRect().height * window.devicePixelRatio;
             e.target.width = e.target.getBoundingClientRect().width * window.devicePixelRatio;
 
+            document.querySelectorAll('.runText span').forEach((e, i) => {
+                if (i == 0)
+                e.parentElement.style.transform = "translate(-" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
+                else 
+                e.parentElement.style.transform = "translate(" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
+            });
+
             cirWord = [];
         
             word.forEach(e => {
@@ -377,7 +384,7 @@ async function initCanvas() {
 
     function render() {
         time = Date.now() - startTime;
-        runPhysics(oldTime, time, 10);
+        //runPhysics(oldTime, time, 10);
         oldTime = time;
 
         let arrowPos = aboutRect.top - scroll / 1 + aboutRect.height / 2;
@@ -404,8 +411,17 @@ async function initCanvas() {
         tempCirArrow[1] -= scroll;
         tempCirArrow[4] -= scroll;
 
-        if (scroll < -(window.innerHeight * 1.75 - 50)) {
-            document.querySelector('#skill h1').style.opacity = "1";
+        if (scroll < -window.innerHeight * 1.8) {
+            const s = document.querySelector('#skillHead h1');
+            s.style.opacity = "1";
+            s.style.letterSpacing = "normal";
+
+            document.querySelectorAll('.runText span').forEach((e, i) => {
+                if (i == 0)
+                e.parentElement.style.transform = "translate(0px, 0px)";
+                else 
+                e.parentElement.style.transform = "translate(0px, 0px)";
+            });
         }
 
         if (arrowPos > window.innerHeight * 1.5) {
@@ -495,8 +511,8 @@ async function initCanvas() {
         cirCursor[1] = e.clientY * 1;
         cirCursor[2] = 100;
 
-        document.getElementById('cur').style.top = e.clientX + "px";
-        document.getElementById('cur').style.left = e.clientY + "px";
+        // document.getElementById('cur').style.top = e.clientY + "px";
+        // document.getElementById('cur').style.left = e.clientX + "px";
     }, 8));
 
     render();
@@ -554,19 +570,80 @@ function setPhysics() {
     }
 }
 
-function checkColision(e) {//debugger
-    let rectLeft = document.getElementsByClassName('jump')[0].getBoundingClientRect();
-    let cenLeft = {x:rectLeft.top + rectLeft.height / 2, y:rectLeft.left + rectLeft.width / 2};
-    let rect = e.getBoundingClientRect();
+function getRotationAngle(element) {
+    const style = window.getComputedStyle(element);
+    const transform = style.transform || style.webkitTransform || style.mozTransform;
 
-    const agl = Math.atan2(rect.height - cenLeft.y, rect.left - cenLeft.x);
-    const d = dis({x:rect.left + 25, y:rect.top + 25}, {x:cenLeft.x, y:cenLeft.y});
+    if (!transform || transform === 'none') {
+        return 0;
+    }
+
+    // Transform matrix: matrix(a, b, c, d, tx, ty)
+    const values = transform.match(/matrix\(([^)]+)\)/)[1].split(', ');
+    const a = parseFloat(values[0]);
+    const b = parseFloat(values[1]);
+
+    const angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+    return (angle + 360) % 360;
+}
+
+function checkColision(e) {//debugger
+    const rect = e.getBoundingClientRect();
+
+    // e.style.backgroundColor = "black";
+    
+    //LEFT
+    let rectJump = document.getElementsByClassName('jump')[0].getBoundingClientRect();
+    let cenJump = {x:rectJump.left + rectJump.width / 2, y:rectJump.top + rectJump.height / 2};
+    let jumpWidth2 = .3 * window.innerWidth / 2;
+
+    let agl = Math.atan2(rect.top + 25 - cenJump.y, rect.left + 25 - cenJump.x);
+    let d = dis({x:rect.left + 25, y:rect.top + 25}, {x:cenJump.x, y:cenJump.y});
 
     let local = {x:Math.cos(agl - 0.5235987755982988) * d, y:Math.sin(agl - 0.5235987755982988) * d};
 
-    if (local.y > 0) {
-        console.log(true);
+    if (local.y + 25 >= -5 && local.y - 25 <= 5 && local.x + 25 >= -jumpWidth2 && local.x - 25 <= jumpWidth2) {
+        // console.log(true);
+        // e.style.backgroundColor = "red";
+
+        return 0.5235987755982988;
     }
+
+    //RIGHT
+    rectJump = document.getElementsByClassName('jump')[2].getBoundingClientRect();
+    cenJump = {x:rectJump.left + rectJump.width / 2, y:rectJump.top + rectJump.height / 2};
+
+    agl = Math.atan2(rect.top + 25 - cenJump.y, rect.left + 25 - cenJump.x);
+    d = dis({x:rect.left + 25, y:rect.top + 25}, {x:cenJump.x, y:cenJump.y});
+
+    local = {x:Math.cos(agl + 0.5235987755982988) * d, y:Math.sin(agl + 0.5235987755982988) * d};
+
+    if (local.y + 25 >= -5 && local.y - 25 <= 5 && local.x + 25 >= -jumpWidth2 && local.x - 25 <= jumpWidth2) {
+        // console.log(true);
+        // e.style.backgroundColor = "red";
+
+        return -0.5235987755982988;
+    }
+
+    //SPIN
+    rectJump = document.getElementsByClassName('jump')[1].getBoundingClientRect();
+    cenJump = {x:rectJump.left + rectJump.width / 2, y:rectJump.top + rectJump.height / 2};
+    jumpWidth2 = .2 * window.innerWidth / 2;
+    let spinAgl = getRotationAngle(document.getElementsByClassName('jump')[1]) / 180 * Math.PI;
+
+    agl = Math.atan2(rect.top + 25 - cenJump.y, rect.left + 25 - cenJump.x);
+    d = dis({x:rect.left + 25, y:rect.top + 25}, {x:cenJump.x, y:cenJump.y});
+
+    local = {x:Math.cos(agl - spinAgl) * d, y:Math.sin(agl - spinAgl) * d};
+
+    if (local.y + 25 >= -5 && local.y - 25 <= 5 && local.x + 25 >= -jumpWidth2 && local.x - 25 <= jumpWidth2) {
+        // console.log(true);
+        // e.style.backgroundColor = "red";
+
+        return spinAgl;
+    }
+
+    return 10;
 }
 
 function runPhysics(oldTime, time, obsPerSec) {
@@ -574,40 +651,54 @@ function runPhysics(oldTime, time, obsPerSec) {
     let rectAni = ani.getBoundingClientRect();
     let obs = document.querySelectorAll('#animation .obs');
 
-    // if (time - oldTime > Math.random() * 1000 / obsPerSec) {
-    //     let sq = document.createElement('div');
-    //     // let shape = (Math.random() > .5 ? "square":"circle");
-    //     sq.className = "obs circle";
-    //     sq.type = (Math.random() > .5 ? "soft":"solid");
-    //     // sq.shape = shape;
-    //     sq.style.left = Math.random() * 100 + "%";
-    //     sq.speedx = 0;
-    //     sq.speedy = 0;
-    //     // if (shape != "circle") {
-    //     //     sq.style.transform = "rotate(" + Math.random() * 90 + "deg)";
-    //     //     sq.aglS = 10 * (Math.random() - .5);
-    //     // }
+    if (time - oldTime > Math.random() * 1000 / obsPerSec) {
+        let sq = document.createElement('div');
+        // let shape = (Math.random() > .5 ? "square":"circle");
+        sq.className = "obs circle";
+        sq.type = (Math.random() > .5 ? "soft":"solid");
+        // sq.shape = shape;
+        sq.style.left = Math.random() * 100 + "%";
+        sq.speedx = 0;
+        sq.speedy = 0;
+        // if (shape != "circle") {
+        //     sq.style.transform = "rotate(" + Math.random() * 90 + "deg)";
+        //     sq.aglS = 10 * (Math.random() - .5);
+        // }
 
-    //     ani.append(sq);
-    // }
+        ani.append(sq);
+    }
 
     obs.forEach(e => {
-        checkColision(e);
+        let c = checkColision(e);
+
+        if (c !== 10) {
+            //e.remove();
+
+            e.speedx = -Math.cos(c + Math.PI / 2) * e.speedy * .8;
+            e.speedy *= -Math.sin(c + Math.PI / 2) * .8;
+        }
 
         let rect = e.getBoundingClientRect();
 
         if (rect.top > rectAni.height + rectAni.top) {
-            //e.remove();
+            e.remove();
         }
 
-        e.speedx += 900 * 9.8 * (time - oldTime) / 1000;
+        e.speedy += 100 * 9.8 * (time - oldTime) / 1000;
 
-        e.style.top = Number(e.style.top.replaceAll("px", "")) + e.speedx * (time - oldTime) / 1000 + "px";
-        e.style.left = Number(e.style.left.replaceAll("%", "")) + (100 * e.speedy * (time - oldTime) / (window.innerWidth * 1000)) + "%";
+        e.style.top = Number(e.style.top.replaceAll("px", "")) + e.speedy * (time - oldTime) / 1000 + "px";
+        e.style.left = Number(e.style.left.replaceAll("%", "")) + (100 * e.speedx * (time - oldTime) / (window.innerWidth * 1000)) + "%";
     });
 }
 
-async function main() {    
+async function main() {  
+    document.querySelectorAll('.runText span').forEach((e, i) => {
+        if (i == 0)
+        e.parentElement.style.transform = "translate(-" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
+        else 
+        e.parentElement.style.transform = "translate(" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
+    });
+    
     await initCanvas();
 
     setDelayAni(100, "showUp .5s ease", '#home-header span[class="move"]');

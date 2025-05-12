@@ -40,6 +40,7 @@ html {
     height: 100%;
     box-sizing: border-box;
     overflow: auto;
+    overflow-x: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
     z-index: 2;
@@ -245,19 +246,49 @@ html {
     }
 }
 
-#skill {
+#skillHead {
     width: 100%;
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    /* justify-content: space-around; */
 }
 
-#skill h1 {
+#skillHead h1 {
     opacity: 0;
-    font-size: 70px;
+    font-size: 15vh;
     transition: all 1s ease;
+    letter-spacing: 200px;
+    white-space: nowrap;
+    margin: 0%;
+    height: fit-content;
+}
+
+.runText {
+    height: fit-content;
+    width: 100%;
+    transition: all 1s ease;
+    padding-left: 10vw;
+    padding-right: 10vw;
+    box-sizing: border-box;
+}
+
+.runText span {
+    font-size: 10vh;
+    color: transparent;
+    -webkit-text-stroke: 2px rgb(255, 255, 255);
+}
+
+#bot {
+    text-align:right;
+    /* transform: translate(500px, 0px); */
+}
+
+#skill {
+    height: 100vh;
+    width: 100%;
 }
 
 #animation {
@@ -318,6 +349,6 @@ html {
     height: 50px;
     width: 50px;
     border-radius: 100%;
-    transition: all .3s ease;
+    /* transition: all .3s ease; */
     background-color: rgb(0, 0, 0);
 }
