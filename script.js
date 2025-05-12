@@ -406,8 +406,6 @@ async function initCanvas() {
 
         if (scroll < -(window.innerHeight * 1.75 - 50)) {
             document.querySelector('#skill h1').style.opacity = "1";
-
-
         }
 
         if (arrowPos > window.innerHeight * 1.5) {
@@ -496,7 +494,9 @@ async function initCanvas() {
         cirCursor[0] = e.clientX * 1;
         cirCursor[1] = e.clientY * 1;
         cirCursor[2] = 100;
-        console.log('move');
+
+        document.getElementById('cur').style.top = e.clientX + "px";
+        document.getElementById('cur').style.left = e.clientY + "px";
     }, 8));
 
     render();
@@ -554,20 +554,19 @@ function setPhysics() {
     }
 }
 
-function checkColision(e) {
-    let rectLeft = document.getElementsByClassName('jump').getBoundingClientRect();
-    let cenLeft = {x:rectLeft.top * (1 + rectLeft.height) / 2, y:rectLeft.left * (1 + rectLeft.width) / 2};
+function checkColision(e) {//debugger
+    let rectLeft = document.getElementsByClassName('jump')[0].getBoundingClientRect();
+    let cenLeft = {x:rectLeft.top + rectLeft.height / 2, y:rectLeft.left + rectLeft.width / 2};
     let rect = e.getBoundingClientRect();
 
-    let eReletive2LeftCen = {
-        x:rect.left + 25 - cenLeft.x, 
-        y:rect.top + 25 - cenLeft.y, 
-    };
-
     const agl = Math.atan2(rect.height - cenLeft.y, rect.left - cenLeft.x);
-    const d = dis(rect.left + 25, rect.top + 25, cenLeft.x, cenLeft.y);
+    const d = dis({x:rect.left + 25, y:rect.top + 25}, {x:cenLeft.x, y:cenLeft.y});
 
+    let local = {x:Math.cos(agl - 0.5235987755982988) * d, y:Math.sin(agl - 0.5235987755982988) * d};
 
+    if (local.y > 0) {
+        console.log(true);
+    }
 }
 
 function runPhysics(oldTime, time, obsPerSec) {
@@ -575,28 +574,30 @@ function runPhysics(oldTime, time, obsPerSec) {
     let rectAni = ani.getBoundingClientRect();
     let obs = document.querySelectorAll('#animation .obs');
 
-    if (time - oldTime > Math.random() * 1000 / obsPerSec) {
-        let sq = document.createElement('div');
-        // let shape = (Math.random() > .5 ? "square":"circle");
-        sq.className = "obs circle";
-        sq.type = (Math.random() > .5 ? "soft":"solid");
-        // sq.shape = shape;
-        sq.style.left = Math.random() * 100 + "%";
-        sq.speedx = 0;
-        sq.speedy = 0;
-        // if (shape != "circle") {
-        //     sq.style.transform = "rotate(" + Math.random() * 90 + "deg)";
-        //     sq.aglS = 10 * (Math.random() - .5);
-        // }
+    // if (time - oldTime > Math.random() * 1000 / obsPerSec) {
+    //     let sq = document.createElement('div');
+    //     // let shape = (Math.random() > .5 ? "square":"circle");
+    //     sq.className = "obs circle";
+    //     sq.type = (Math.random() > .5 ? "soft":"solid");
+    //     // sq.shape = shape;
+    //     sq.style.left = Math.random() * 100 + "%";
+    //     sq.speedx = 0;
+    //     sq.speedy = 0;
+    //     // if (shape != "circle") {
+    //     //     sq.style.transform = "rotate(" + Math.random() * 90 + "deg)";
+    //     //     sq.aglS = 10 * (Math.random() - .5);
+    //     // }
 
-        ani.append(sq);
-    }
+    //     ani.append(sq);
+    // }
 
     obs.forEach(e => {
+        checkColision(e);
+
         let rect = e.getBoundingClientRect();
 
         if (rect.top > rectAni.height + rectAni.top) {
-            e.remove();
+            //e.remove();
         }
 
         e.speedx += 900 * 9.8 * (time - oldTime) / 1000;

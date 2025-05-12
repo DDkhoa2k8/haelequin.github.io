@@ -40,8 +40,8 @@ html {
     height: 100%;
     box-sizing: border-box;
     overflow: auto;
-    /* scrollbar-width: none;
-    -ms-overflow-style: none; */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     z-index: 2;
 }
 
