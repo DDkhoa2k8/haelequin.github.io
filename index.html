@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My forfilio</title>
     <link rel="stylesheet" href="style.css">
-    <script src="./lib/opentype.min.js"></script>
 </head>
 <body>
     <canvas id="cv"></canvas>
@@ -21,17 +20,23 @@
         </div>
         <div class="navp">
             <div class="navlink">
-                <div>
+                <div onclick="scrollHome()">
                     Home
                     <div class="underline"></div>
                 </div>
             </div>
             <div class="navlink">
-                <div>
+                <div  onclick="scrollAbout()">
                     About
                     <div class="underline"></div>
                 </div>
 
+            </div>
+            <div class="navlink">
+                <div onclick="scrollSkill()">
+                    Skill
+                    <div class="underline"></div>
+                </div>
             </div>
             <div class="navlink">
                 <div>
@@ -63,12 +68,38 @@
             <div id="aboutTxt">Tôi bắt đầu tự học lập trình từ năm 12 tuổi. Tôi đã không ngừng cải thiện kỹ năng lập trình của mình. Tôi rất thích tạo ra những hiệu ứng thú vị và những thiết kế độc đáo.</div>
         </div>
         <div id="skillHead">
-            <div class="runText"><span>MY</span></div>
-            <h1>Kỹ năng</h1>
-            <div class="runText" id="bot"><span>SKILL</span></div>
+            <div>
+                <div class="runText"><span>MY</span></div>
+                <h1>Kỹ năng</h1>
+                <div class="runText" id="bot"><span>SKILL</span></div>
+            </div>
         </div>
         <div id="skill">
-            
+            <!-- <div id="midCir"></div> -->
+             <div class="item">
+                <div class="vline"></div>
+             </div>
+             <div class="item">
+                <div class="hline f"></div>
+             </div>
+             <div class="item">
+                <div class="cir"></div>
+             </div>
+             <div class="item">
+                <div class="hline"></div>
+             </div>
+             <div class="item">
+                <div class="cir"></div>
+             </div>
+             <div class="item">
+                <div class="hline"></div>
+             </div>
+             <div class="item">
+                <div class="cir"></div>
+             </div>
+             <div class="item">
+                <div class="hline l"></div>
+             </div>
         </div>
         <!-- <div id="animation">
             <div class="jump" id="left"></div>

@@ -324,12 +324,12 @@ async function initCanvas() {
             e.target.height = e.target.getBoundingClientRect().height * window.devicePixelRatio;
             e.target.width = e.target.getBoundingClientRect().width * window.devicePixelRatio;
 
-            document.querySelectorAll('.runText span').forEach((e, i) => {
-                if (i == 0)
-                e.parentElement.style.transform = "translate(-" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
-                else 
-                e.parentElement.style.transform = "translate(" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
-            });
+            // document.querySelectorAll('.runText span').forEach((e, i) => {
+            //     if (i == 0)
+            //     e.parentElement.style.transform = "translate(-" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, " + -.1 * window.innerHeight + "px)";
+            //     else 
+            //     e.parentElement.style.transform = "translate(" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, " + .1 * window.innerHeight + "px)";
+            // });
 
             cirWord = [];
         
@@ -416,12 +416,13 @@ async function initCanvas() {
             s.style.opacity = "1";
             s.style.letterSpacing = "normal";
 
-            document.querySelectorAll('.runText span').forEach((e, i) => {
-                if (i == 0)
-                e.parentElement.style.transform = "translate(0px, 0px)";
-                else 
-                e.parentElement.style.transform = "translate(0px, 0px)";
-            });
+            // document.querySelectorAll('.runText span').forEach((e, i) => {
+            //     e.parentElement.style.opacity = 1;
+            //     if (i == 0)
+            //     e.parentElement.style.transform = "translate(0px, " + -.1 * window.innerHeight + "px)";
+            //     else 
+            //     e.parentElement.style.transform = "translate(0px, " + .1 * window.innerHeight + "px)";
+            // });
         }
 
         if (arrowPos > window.innerHeight * 1.5) {
@@ -691,13 +692,38 @@ function runPhysics(oldTime, time, obsPerSec) {
     });
 }
 
-async function main() {  
-    document.querySelectorAll('.runText span').forEach((e, i) => {
-        if (i == 0)
-        e.parentElement.style.transform = "translate(-" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
-        else 
-        e.parentElement.style.transform = "translate(" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, 0px)";
+function scrollHome() {
+    let e =  document.getElementById('mainL');
+
+    e.scrollIntoView({
+        behavior: 'smooth', 
     });
+}
+
+function scrollAbout() {
+    let e =  document.getElementById('about');
+
+    e.scrollIntoView({
+        behavior: 'smooth', 
+    });
+}
+
+function scrollSkill() {
+    let e =  document.getElementById('skillHead');
+
+    e.scrollIntoView({
+        behavior: 'smooth', 
+    });
+}
+
+async function main() {  
+    //let rt = document.querySelectorAll('.runText span');
+    // rt.forEach((e, i) => {
+    //     if (i == 0)
+    //         e.parentElement.style.transform = "translate(-" + (e.getBoundingClientRect().width + .1 * window.innerWidth) + "px, -" + .1 * window.innerHeight + "px)";
+    //     else 
+    //         e.parentElement.style.transform = "translate(" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, " + .1 * window.innerHeight  + "px)";
+    // });
     
     await initCanvas();
 
