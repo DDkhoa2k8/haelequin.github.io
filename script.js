@@ -411,18 +411,12 @@ async function initCanvas() {
         tempCirArrow[1] -= scroll;
         tempCirArrow[4] -= scroll;
 
-        if (scroll < -window.innerHeight * 1.8) {
+        if (scroll < -window.innerHeight * 2.5) {
+            animateSkill();
+        } else if (scroll < -window.innerHeight * 1.8) {
             const s = document.querySelector('#skillHead h1');
             s.style.opacity = "1";
             s.style.letterSpacing = "normal";
-
-            // document.querySelectorAll('.runText span').forEach((e, i) => {
-            //     e.parentElement.style.opacity = 1;
-            //     if (i == 0)
-            //     e.parentElement.style.transform = "translate(0px, " + -.1 * window.innerHeight + "px)";
-            //     else 
-            //     e.parentElement.style.transform = "translate(0px, " + .1 * window.innerHeight + "px)";
-            // });
         }
 
         if (arrowPos > window.innerHeight * 1.5) {
@@ -507,7 +501,7 @@ async function initCanvas() {
         requestAnimationFrame(render);
     }
 
-    document.addEventListener('mousemove', throttle(e => {
+    document.addEventListener('pointermove', throttle(e => {
         cirCursor[0] = e.clientX * 1;
         cirCursor[1] = e.clientY * 1;
         cirCursor[2] = 100;
@@ -716,15 +710,14 @@ function scrollSkill() {
     });
 }
 
+function animateSkill() {
+    let s = document.getElementById("skill");
+
+    if (!s.classList.value.includes('traigger'))
+    s.classList.add('trigger');
+}
+
 async function main() {  
-    //let rt = document.querySelectorAll('.runText span');
-    // rt.forEach((e, i) => {
-    //     if (i == 0)
-    //         e.parentElement.style.transform = "translate(-" + (e.getBoundingClientRect().width + .1 * window.innerWidth) + "px, -" + .1 * window.innerHeight + "px)";
-    //     else 
-    //         e.parentElement.style.transform = "translate(" + (e.getBoundingClientRect().width + .1  * window.innerWidth) + "px, " + .1 * window.innerHeight  + "px)";
-    // });
-    
     await initCanvas();
 
     setDelayAni(100, "showUp .5s ease", '#home-header span[class="move"]');

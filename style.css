@@ -328,105 +328,160 @@ html {
     /* border: 1px solid white; */
     justify-content: center;
     align-items: center;
+    overflow:visible;
+    position: relative;
 }
 
 .vline {
+    --line-ani: 0%;
     height: 100%;
     width: 2px;
-    /* background-color: linear(); */
     background: linear-gradient(0deg, white, black);
+    -webkit-mask:linear-gradient(180deg, white 0%, white var(--line-ani), transparent var(--inv-line-ani), transparent 100%);
+    mask: linear-gradient(180deg, white 0%, white var(--line-ani), transparent var(--line-ani), transparent 100%);
 }
 
 .hline {
+    --line-ani: 0%;
+    --line-agl: 90deg;
     height: 2px;
     width: 100%;
     background-color: white;
+    -webkit-mask:linear-gradient(var(--line-agl), white 0%, white var(--line-ani), transparent var(--inv-line-ani), transparent 100%);
+    mask: linear-gradient(var(--line-agl), white 0%, white var(--line-ani), transparent var(--line-ani), transparent 100%);
 }
 
 .f {
     background: linear-gradient(-90deg, white, black);
 }
 
+.left {
+    --line-agl: 270deg;
+}
+
+.right {
+    --line-agl: 90deg;
+}
+
 .l {
     background: linear-gradient(90deg, white, black);
+}
+
+@property --cur-agl {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --inv-cur-agl {
+  syntax: '<angle>';
+  initial-value: 360deg;
+  inherits: false;
+}
+
+@property --line-ani {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
 }
 
 .cir {
     height: 100%;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0);
     border: 2px solid rgb(255, 255, 255);
     border-radius: 100%;
-    /* animation: aniClip .3s ease forwards; */
-}
-
-@keyframes aniClip {
-    0% {
-        clip-path: polygon(0 0, 100% 0, 100% 0%, 0 0%);
-    }
-    100% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    }
-}
-
-#animation {
-    width: 100%;
-    height: 100vh;
-    /* display: flex;
-    flex-direction: column;
+    -webkit-mask:conic-gradient(
+        white var(--cur-agl), 
+        rgba(255, 255, 255, 0) var(--cur-agl) var(--inv-cur-agl), 
+        white var(--inv-cur-agl) 360deg
+    );
+    mask:conic-gradient(
+        white var(--cur-agl), 
+        rgba(0, 0, 0, 0) var(--cur-agl) var(--inv-cur-agl), 
+        white var(--inv-cur-agl) 360deg
+    );
+    display: flex;
     justify-content: center;
-    align-items: center; */
-    position: relative;
-    overflow: hidden;
+    align-items: center;
 }
 
-.jump {
-    height: 10px;
-    width: 30%;
-    background-color: rgb(0, 0, 0);
-    bottom: 100px;
+.cir.f {
+    transform: rotate(90deg);
+    background: none;
 }
 
-#left {
-    position: absolute;
-    transform: rotateZ(30deg);
+.cir.l {
+    transform: rotate(-90deg);
+    background: none;
+
 }
 
-#right {
-    position: absolute;
-    transform: rotateZ(-30deg);
-    right: 10px;
+:root {
+    --vline-ani-time:.3s;
+    --cir-ani-time:.3s;
+    --hline-ani-time:.3s;
 }
 
-#spin {
-    width: 20%;
-    bottom: 0px;
-    left: calc(50% - 20% / 2);
-    position: absolute;
-    animation: spin 2s linear infinite;
+.trigger .vline {
+    animation: aniLine var(--vline-ani-time) linear forwards;
 }
 
-@keyframes spin {
+.trigger .cir.mid {
+    animation: aniCir var(--cir-ani-time) linear forwards var(--vline-ani-time);
+}
+
+.trigger .line.hline {
+    animation: aniLine var(--hline-ani-time) linear forwards calc(var(--vline-ani-time) + var(--cir-ani-time) / 2);
+}
+
+.trigger .cir {
+    animation: aniCir var(--cir-ani-time) linear forwards calc(var(--vline-ani-time) + var(--cir-ani-time) / 2 + var(--hline-ani-time));
+}
+
+.trigger .line.hline.f, .trigger .line.hline.l {
+    animation: aniLine var(--hline-ani-time) linear forwards calc(var(--vline-ani-time) + var(--cir-ani-time) / 2 + var(--hline-ani-time) + var(--cir-ani-time));
+}
+
+@keyframes aniLine {
     0% {
-        transform: rotate(0deg);
-    }
-    50% {
-        transform: rotate(180deg);
+        --line-ani: 0%;
     }
     100% {
-        transform: rotate(360deg);
+        --line-ani: 100%;
     }
 }
 
-.obs {
-    position: absolute;
-    top: -100px;
+@keyframes aniCir {
+    0% {
+        --cur-agl: 0deg;
+        --inv-cur-agl: 360deg;
+    }
+    100% {
+        --cur-agl: 180deg;
+        --inv-cur-agl: 180deg;
+    }
 }
 
-.circle {
-    height: 50px;
-    width: 50px;
-    border-radius: 100%;
-    /* transition: all .3s ease; */
-    background-color: rgb(0, 0, 0);
+.card {
+    height: 100%;
+    aspect-ratio: 1 / 2;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    opacity: 0;
+    position: absolute;
+}
+
+.trigger .card {
+    animation: showCard .3s ease calc(var(--vline-ani-time) + var(--cir-ani-time) / 2 + var(--hline-ani-time) + var(--cir-ani-time)) forwards;
+}
+
+@keyframes showCard {
+    0% {
+        opacity: 0;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
 }
