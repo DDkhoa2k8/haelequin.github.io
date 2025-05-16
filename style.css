@@ -472,7 +472,7 @@ html {
     position: absolute;
     transition: transform .5s ease;
     /* transition: height .5s ease; */
-    /* z-index: 1; */
+    z-index: 1;
 }
 
 .back {
@@ -505,7 +505,7 @@ html {
     width: calc(100% + var(--border-size));
     height: calc(100% + var(--border-size));
     position: absolute;
-    /* z-index: 2; */
+    z-index: 2;
     -webkit-mask: radial-gradient(circle, transparent 0%, transparent var(--show), var(--color) var(--show), var(--color) 120%);
     mask: radial-gradient(circle, transparent 0%, transparent var(--show), var(--color) var(--show), var(--color) 120%);
     transition: --show .3s ease;
