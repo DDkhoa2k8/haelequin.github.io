@@ -70,7 +70,7 @@ fn vs(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
 @fragment
 fn fs(input: VertexOutput) -> @location(0) vec4f {
     //let color = vec4f(input.gradient, 1);
-    let color = vec4f(0, 0, 0, 1);
+    let color = vec4f(vec3f(0), 1);
     var sum:f32 = 0;
     let t = f32(min(time, 1000)) / 1000.0;
     let ani = 1 - pow(abs(1 - t), 4);
@@ -121,5 +121,5 @@ fn fs(input: VertexOutput) -> @location(0) vec4f {
         }
     }
 
-    return vec4f(1) * select(1, 1 - (input.pos.y + 200 - (ratio.y * 3 + scrollpxR)) / 200, input.pos.y + 200 > ratio.y * 3 + scrollpxR);
+    return vec4f(vec3f(1), 1) * select(1, 1 - (input.pos.y + 200 - (ratio.y * 3 + scrollpxR)) / 200, input.pos.y + 200 > ratio.y * 3 + scrollpxR);
 }
