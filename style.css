@@ -1,6 +1,7 @@
 html, body {
     margin: 0%;
-    width: 100%;
+    width: 100vw;
+    height: 100vh;
 }
 
 body {
@@ -465,21 +466,28 @@ html {
 }
 
 .card {
+    --border-size: 5px;
+    --color: rgb(255, 255, 255);
+    --border-radi: 10px;
     height: 80%;
     aspect-ratio: 1 / 2;
     border-radius: 10px;
     background-color: rgb(255, 255, 255);
     opacity: 0;
     position: absolute;
-    transition: transform .5s ease;
+    transition: all .5s ease;
     /* transition: height .5s ease; */
     z-index: 1;
+    transform-style: preserve-3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 0px 0px 0px var(--color);
+    will-change: transform;
+    will-change: height;
 }
 
 .back {
-    --border-size: 5px;
-    --border-radi: 10px;
-    --color: rgb(255, 255, 255);
     background-color: black;
     width: 100%;
     height: 100%;
@@ -490,6 +498,9 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all .3s ease;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 @property --show {
@@ -526,7 +537,8 @@ html {
 }
 
 .trigger .card {
-    animation: showCard .5s ease calc(var(--vline-ani-time) + var(--cir-ani-time) / 2 + var(--hline-ani-time) + var(--cir-ani-time)) forwards;
+    opacity: 1;
+    animation: showCard .5s ease calc(var(--vline-ani-time) + var(--cir-ani-time) / 2 + var(--hline-ani-time) + var(--cir-ani-time)) backwards;
 }
 
 @keyframes showCard {
@@ -542,3 +554,13 @@ html {
     }
 }
 
+.front {
+    position: absolute;
+    transform: rotateY(180deg) rotate(-90deg);
+    height: 50%;
+    aspect-ratio: 2 / 1;
+    border-radius: var(--border-radi);
+    border: var(--border-size) solid var(--color);
+    background-color: black;
+    box-sizing: border-box;
+}
